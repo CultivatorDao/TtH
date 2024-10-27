@@ -1,0 +1,20 @@
+nameOfing = 'red grass +10 ки'
+efficienty = 100
+ingRedGrass = [nameOfing, 'common', efficienty]
+nameOfing = 'black flower +15 ки'
+efficienty = 150
+ingBlackFlower = [nameOfing, 'common', efficienty]
+ingBlueGrass = ['blue grass +5 ки', 'common', 5]
+ingEarthTongue = ['earth tongue +30 ки', 'common', 300]
+ingSkyTrevor = ['sky trevor +10 фс', 'common', 100]
+ingBloodyGrass = ['bloody grass +5 хп']
+ingGoldenFruit = ['golden fruit +20 фс']
+ingMoonFlower = ['moon flower +50 ки']
+indLyngchi = ['lichi +15 хп']
+ingGinseng = ['ginseng +40 фс']
+ingSunFlower = ['sun flower +100 ки']
+ingFrogFlower = ['frog flower +20 ун']
+
+lowQual = [ingBlueGrass, ingFrogFlower, ingBloodyGrass, ingRedGrass, ingFrogFlower, ingSkyTrevor]
+medQual = [indLyngchi, ingMoonFlower, ingBlackFlower, ingGinseng, ingEarthTongue, ingGoldenFruit]
+hihgQual = [ingSunFlower]
