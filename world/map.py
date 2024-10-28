@@ -14,6 +14,3 @@ class Map:
             for x in range(self.width):
                 print("0", end="")
             print()
-
-    def execute(self, command):
-        switch

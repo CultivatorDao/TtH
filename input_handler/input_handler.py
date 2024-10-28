@@ -3,20 +3,26 @@ class InputHandler:
     def __init__(self, engine):
         self.engine = engine
         self.map = self.engine.world
-        self.commands = {
-            "exit": self.engine.exit,
-            "map": self.map.show_map
-        }
-        # self.commands = self.engine.state.commands
+        self.commands: dict = self.engine.state.commands
+        self.key_bindings: dict = self.create_key_bindings()
+
+    def create_key_bindings(self):
+        if len(self.engine.state.key_bindings.keys()) != len(self.commands):
+            return {key: list(self.commands.keys())[key] for key in range(len(self.commands.keys()))}
+        else:
+            return self.engine.state.key_bindings
 
     def get_command(self):
-        for i in range(len(self.commands.keys())):
-            print(f"[{i}]{list(self.commands.keys())[i].capitalize()} ", end="")
-        print()
+        self.display_commands()
         command = input()
-        print(list(self.commands.keys())[int(command)])
-        if list(self.commands.keys())[int(command)] in self.commands.keys():
-            self.commands[list(self.commands.keys())[int(command)]]()
-        else:
-            pass
+        self.execute_command(command)
+        print(self.engine.character.position)
 
+    def display_commands(self):
+        for key in self.key_bindings.keys():
+            print(f"[{key.capitalize()}]{self.key_bindings[key]}  ", end="")
+        print()
+
+    def execute_command(self, command):
+        if command in self.key_bindings.keys():
+            self.commands[self.key_bindings[command]]()

@@ -1,16 +1,18 @@
 from input_handler.input_handler import InputHandler
 from world.map import Map
+from state.adventure_state import AdventureState
+from entities.character import Character
 
 
 class Engine:
 
     def __init__(self):
-        self.character = None
+        self.character = Character()
         self.world = Map(engine=self)
-        self.input_handler = InputHandler(engine=self)
-        self.default_state = None
+        self.default_state = AdventureState(engine=self)
         self.state = self.default_state
         self.is_on = True
+        self.input_handler = InputHandler(engine=self)
 
     def main(self):
         while self.is_on:
