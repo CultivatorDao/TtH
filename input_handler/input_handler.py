@@ -2,7 +2,7 @@ class InputHandler:
 
     def __init__(self, engine):
         self.engine = engine
-        self.map = self.engine.world
+        self.world = self.engine.world
         self.commands: dict = self.engine.state.commands
         self.key_bindings: dict = self.create_key_bindings()
 
@@ -16,7 +16,6 @@ class InputHandler:
         self.display_commands()
         command = input()
         self.execute_command(command)
-        print(self.engine.character.position)
 
     def display_commands(self):
         for key in self.key_bindings.keys():

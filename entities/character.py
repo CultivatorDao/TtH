@@ -21,6 +21,8 @@ class Character:
         self.inventory = []
         self.skills = ['Pressure Point ', 'atk', 10, 5, color.Color.White, 300, 'Neutral']
 
+        self.icon = "@"
+
         # Hp Properties
         # self.full_hp = 100
         # self.hp = self.full_hp

@@ -6,6 +6,7 @@ class AdventureState(State):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.world = self.engine.world.map
         self.character_position: PositionComponent = self.engine.character.position
         self.commands = self.create_commands_dict()
         self.key_bindings = self.create_key_bindings_dict()
@@ -27,13 +28,13 @@ class AdventureState(State):
         }
 
     def travel_up(self):
-        self.character_position.move(0, -1)
+        self.world.move(0, -1)
 
     def travel_down(self):
-        self.character_position.move(0, 1)
+        self.world.move(0, 1)
 
     def travel_right(self):
-        self.character_position.move(1, 0)
+        self.world.move(1, 0)
 
     def travel_left(self):
-        self.character_position.move(-1, 0)
+        self.world.move(-1, 0)
