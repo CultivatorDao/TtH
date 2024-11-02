@@ -32,6 +32,8 @@ class InputHandler:
                         if self.engine.dialogue != key.dialogue:
                             self.engine.dialogue.close()
                             key.execute()
+                        else:
+                            key.execute()
                     else:
                         pass
                 else:
