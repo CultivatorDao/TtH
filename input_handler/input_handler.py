@@ -3,14 +3,14 @@ class InputHandler:
     def __init__(self, engine):
         self.engine = engine
         self.world = self.engine.world
-        self.commands: dict = self.engine.state.commands
-        self.key_bindings: dict = self.create_key_bindings()
+        self.commands = self.engine.state.commands
 
-    def create_key_bindings(self):
-        if len(self.engine.state.key_bindings.keys()) != len(self.commands):
-            return {key: list(self.commands.keys())[key] for key in range(len(self.commands.keys()))}
+    @property
+    def keys(self):
+        if self.engine.dialogue:
+            return self.engine.dialogue.commands + self.commands
         else:
-            return self.engine.state.key_bindings
+            return self.commands
 
     def get_command(self):
         self.display_commands()
@@ -18,10 +18,21 @@ class InputHandler:
         self.execute_command(command)
 
     def display_commands(self):
-        for key in self.key_bindings.keys():
-            print(f"[{key.capitalize()}]{self.key_bindings[key]}  ", end="")
+        for command in self.commands:
+            print(command, end="")
         print()
+        if self.engine.dialogue:
+            self.engine.dialogue.show()
 
     def execute_command(self, command):
-        if command in self.key_bindings.keys():
-            self.commands[self.key_bindings[command]]()
+        for key in self.keys:
+            if key.key.lower() == command:
+                if self.engine.dialogue:
+                    if self.engine.dialogue.can_skip:
+                        if self.engine.dialogue != key.dialogue:
+                            self.engine.dialogue.close()
+                            key.execute()
+                    else:
+                        pass
+                else:
+                    key.execute()

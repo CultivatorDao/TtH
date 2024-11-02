@@ -1,26 +1,25 @@
+from state.command import Command
+
+
 class State:
 
     def __init__(self, engine):
         self.engine = engine
-        self.default_commands = {
-            "Exit": self.engine.exit,
-        }
-        self.commands = None
-        self.default_key_bindings = {
-            "Exit": "Exit"
-        }
-        self.key_bindings = None
+        self._default_instructions = [
+            ["k", "Look Around", self.engine.world.map.check_collisions],
+            ["~", "Exit", self.engine.exit],
+        ]
+        self.commands = []
 
-    @staticmethod
-    def add_commands():
-        return {}
+    def set_default(self, instructions, blank=False):
+        if blank:
+            self._default_instructions = instructions
+        else:
+            self._default_instructions.extend(instructions)
 
-    def create_commands_dict(self):
-        return dict(self.add_commands(), **self.default_commands)
+    def create_command(self, quarry):
+        self.commands.append(Command(quarry[0].capitalize(), quarry[1], quarry[2], self))
 
-    @staticmethod
-    def add_key_bindings():
-        return {}
-
-    def create_key_bindings_dict(self):
-        return dict(self.add_key_bindings(), **self.default_key_bindings)
+    def create_commands(self, instructions: list):
+        for instruction in instructions + self._default_instructions:
+            self.create_command(instruction)

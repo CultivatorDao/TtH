@@ -10,16 +10,28 @@ class Map:
         self.width = width
         self.height = height
 
-        self.character_position = self.engine.character.position
+        self.character = self.world.character
+        self.character_position = self.character.position
+
+    @property
+    def objects_in_sight(self):
+        return [obj for obj in self.world.all_objects
+                if
+                (self.character_position.x - self.character.eyesight) <
+                obj.position.x < self.character_position.x + self.character.eyesight + 1
+                and
+                self.character_position.y - self.character.eyesight < obj.position.y <
+                self.character_position.y + self.character.eyesight + 1
+                ]
 
     def display_object(self, x, y):
         icon = ""
-        for obj in self.world.all_objects:
+        for obj in self.objects_in_sight:
             if x == obj.position.x and y == obj.position.y:
                 icon = obj.icon
                 break
             else:
-                icon = "0"
+                icon = "~"
 
         print(icon, end=" ")
 
@@ -29,17 +41,25 @@ class Map:
                 self.display_object(x, y)
             print()
 
-    def check_collisions(self, x, y):
-        pass
+    def check_collisions(self):
+        for obj in self.world.all_objects:
+            if (self.character_position.x == obj.position.x and self.character_position.y == obj.position.y) \
+                    and obj.icon != "@":
+                self.engine.dialogue = obj.dialogue
+            else:
+                continue
 
     def character_sight(self):
         position = self.character_position.position
-        print(position)
-        for y in range(position[1] - 2, position[1] + 3):
-            for x in range(position[0] - 2, position[0] + 3):
+        print(self.character_position)
+        for y in range(position[1] - self.character.eyesight, position[1] + self.character.eyesight + 1):
+            for x in range(position[0] - self.character.eyesight, position[0] + self.character.eyesight + 1):
+                if x == position[0] - self.character.eyesight:
+                    print(" " * 30, end="")
                 self.display_object(x, y)
             print()
 
     def move(self, x, y):
         self.character_position.move(x, y)
-        self.character_sight()
+        self.check_collisions()
+
