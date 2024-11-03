@@ -19,7 +19,8 @@ class InputHandler:
 
     def display_commands(self):
         for command in self.commands:
-            print(command, end="")
+            if not command.is_hidden:
+                print(command, end="")
         print()
         if self.engine.dialogue:
             self.engine.dialogue.show()

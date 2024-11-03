@@ -1,3 +1,5 @@
+import sys
+
 from input_handler.input_handler import InputHandler
 from world import World
 from state.adventure_state import AdventureState

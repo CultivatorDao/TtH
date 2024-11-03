@@ -5,5 +5,7 @@ class Tree(Object):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.icon = "#"
-        self.set_position(3, 4)
+        self.name = "Tree"
+        self.icon = "T"
+        self.set_position(10, 10)
+        self.create_dialogue()

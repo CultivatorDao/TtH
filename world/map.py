@@ -2,8 +2,8 @@ class Map:
 
     def __init__(self,
                  world,
-                 width=15,
-                 height=15,
+                 width=30,
+                 height=30,
                  ):
         self.world = world
         self.engine = self.world.engine
@@ -20,9 +20,9 @@ class Map:
         eyesight = self.character.eyesight
 
         return [obj for obj in self.world.all_objects
-                if (_x - eyesight) < obj.position.x < _x + eyesight + 1
+                if (_x - eyesight * 2 - 1) < obj.position.x < _x + eyesight * 2 + 1
                 and
-                _y - eyesight < obj.position.y < _y + eyesight + 1]
+                _y - eyesight * 2 - 1 < obj.position.y < _y + eyesight * 2 + 1]
 
     def display_object(self, x, y):
         icon = "~"
@@ -91,8 +91,8 @@ class Map:
 
         for y in range(y_start, y_end + 1):
             for x in range(x_start, x_end + 1):
-                # if x == position[0] - self.character.eyesight:
-                #     print(" " * 30, end="")
+                if x_start == x:
+                    print(" " * 40, end="")
                 if self.check_boundaries(x, y):
                     self.display_object(x, y)
             print()
@@ -100,7 +100,7 @@ class Map:
     def move(self, x, y):
         _x = self.character_position.x
         _y = self.character_position.y
-
+        print(self.objects_in_sight)
         if self.check_boundaries(x + _x, y + _y):
             self.character_position.move(x, y)
         self.check_collisions()
