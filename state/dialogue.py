@@ -5,7 +5,7 @@ class Dialogue(State):
 
     def __init__(self, message, instructions, can_skip=True, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.can_skip = True
+        self.can_skip = can_skip
         self.message = message
         self.set_default([
             ["`", "Close", self.close],
@@ -14,9 +14,19 @@ class Dialogue(State):
 
     def show(self):
         print(self.message)
-        for key in self.commands:
-            print(key, end="")
-        print()
+        print(*self.commands)
 
     def close(self):
         self.engine.dialogue = None
+
+    def perform(self, action):
+        for command in self.commands:
+            if command.key == action.key:
+                command.execute()
+                break
+        else:
+            if self.can_skip:
+                self.close()
+            else:
+                return False
+        return True

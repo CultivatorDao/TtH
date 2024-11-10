@@ -20,3 +20,6 @@ class KiComponent(BaseComponent):
         self.ki_lvl = 1
         self.ki_mastery = 0
         self.ki_mastery_req = 5000
+
+    def __str__(self):
+        return f"{self.ki}/{self.max_ki}"

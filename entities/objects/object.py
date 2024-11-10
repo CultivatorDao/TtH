@@ -1,5 +1,5 @@
 from ..entity import Entity
-from state.dialogue import Dialogue
+from state import Dialogue
 
 
 class Object(Entity):
@@ -12,7 +12,7 @@ class Object(Entity):
         self.dialogue = Dialogue(engine=self.world.engine,
                                  message=f"You approached {self.name}. Your actions:", instructions=[
                                     ["1", "Destroy", self.destroy],
-                                    ], can_skip=False
+                                    ], can_skip=True
                                  )
 
     def destroy(self):

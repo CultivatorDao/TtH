@@ -100,7 +100,6 @@ class Map:
     def move(self, x, y):
         _x = self.character_position.x
         _y = self.character_position.y
-        print(self.objects_in_sight)
         if self.check_boundaries(x + _x, y + _y):
             self.character_position.move(x, y)
         self.check_collisions()

@@ -1,4 +1,4 @@
-from state.command import Command
+from state import Command
 
 
 class State:
@@ -21,11 +21,13 @@ class State:
 
     def __init__(self, engine):
         self.engine = engine
+        self.name = ""
         self._default_instructions = [
-            ["k", "Look Around", self.engine.world.map.check_collisions, True],
             ["~", "Exit", self.engine.exit],
         ]
         self.commands = []
+        # TODO: Make alias for print. So when you want to change display method, do it through this alias.
+        # self.blit = print
 
     def set_default(self, instructions: list, blank=False):
         """
@@ -48,3 +50,15 @@ class State:
     def create_commands(self, instructions: list):
         for instruction in instructions + self._default_instructions:
             self.create_command(instruction)
+
+    def handle_dialogue(self, *args, **kwargs):
+        pass
+
+    def display_commands(self, *args, **kwargs):
+        pass
+
+    def display(self, *args, **kwargs):
+        pass
+
+    def perform(self, *args, **kwargs):
+        pass

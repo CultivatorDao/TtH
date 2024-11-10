@@ -3,7 +3,7 @@ import components
 
 class Entity:
 
-    def __init__(self, world):
+    def __init__(self, world=None):
         self.world = world
         self.name = ""
         self.icon = " "

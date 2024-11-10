@@ -1,6 +1,6 @@
 class Command:
 
-    def __init__(self, key, name, command, dialogue, is_hidden=False):
+    def __init__(self, key, name=None, command=None, dialogue=None, is_hidden=False):
         self.is_hidden = is_hidden
         self.dialogue = dialogue
         self.key = key
@@ -11,4 +11,5 @@ class Command:
         return f"[{self.key}]{self.name}  "
 
     def execute(self):
-        self.__command()
+        if callable(self.__command):
+            return self.__command()

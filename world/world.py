@@ -1,7 +1,7 @@
 from .map import Map
 
 
-from entities.objects.tree import Tree
+from entities import Tree
 
 
 class World:
