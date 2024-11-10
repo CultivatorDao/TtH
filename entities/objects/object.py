@@ -1,5 +1,5 @@
 from ..entity import Entity
-from state import Dialogue
+from state.dialogue import Dialogue
 
 
 class Object(Entity):

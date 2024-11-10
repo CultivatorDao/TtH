@@ -1,4 +1,4 @@
-from state import Command
+from state.command import Command
 
 
 class State:
@@ -28,6 +28,10 @@ class State:
         self.commands = []
         # TODO: Make alias for print. So when you want to change display method, do it through this alias.
         # self.blit = print
+
+    @staticmethod
+    def create_empty_command(key):
+        return Command(key=key)
 
     def set_default(self, instructions: list, blank=False):
         """

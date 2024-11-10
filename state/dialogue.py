@@ -25,7 +25,7 @@ class Dialogue(State):
                 command.execute()
                 break
         else:
-            if self.can_skip:
+            if self.can_skip and action.name:
                 self.close()
             else:
                 return False

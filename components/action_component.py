@@ -1,7 +1,6 @@
 from .base_component import BaseComponent
-from .skill_component import SkillComponent
 
-from entities import Mob
+from general.custom_types import MobType
 from functools import partial
 
 
@@ -9,8 +8,8 @@ class ActionComponent(BaseComponent):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.target: Mob = None
-        self.skills: SkillComponent = self.parent.skills
+        self.target: MobType = None
+        self.skills = self.parent.skills
 
     def set_target(self, target):
         self.target = target

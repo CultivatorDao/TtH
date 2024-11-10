@@ -1,4 +1,4 @@
-from entities import Mob
+from general.custom_types import MobType
 
 
 class Skill:
@@ -15,7 +15,7 @@ class Skill:
         mystical = "Mystical"
         # elemental = "Elemental"
 
-    def __init__(self, user: Mob):
+    def __init__(self, user: MobType):
 
         self.user = user
         self.name = "Skill"
@@ -67,7 +67,7 @@ class Skill:
         return f"{self.name} {'deals' if self.type == self.Types.damage else 'healed'} " \
                f"{self.power} {self.damage_type} {'damage' if self.type == self.Types.damage else 'health'}"
 
-    def activate(self, target: Mob):
+    def activate(self, target: MobType):
         target.health.change_hp(self.power - target.physics.armor)
 
     def use(self, target):

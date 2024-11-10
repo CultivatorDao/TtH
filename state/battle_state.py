@@ -1,6 +1,6 @@
 from .base_state import State
 
-from entities.mobs.mob import Mob
+# from entities.mobs.mob import Mob
 
 
 class BattleState(State):
@@ -8,7 +8,7 @@ class BattleState(State):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.character = self.engine.character
-        self.enemy = Mob()
+        self.enemy = None
         self.character.action.set_target(self.enemy)
 
         self.set_default([
@@ -27,15 +27,15 @@ class BattleState(State):
 
         self.__state = None
         self.__states = {
-            "win": self.__win,
-            "lose": self.__lose
+            "win": self.win,
+            "lose": self.lose
         }
 
-    def __win(self):
+    def win(self):
         print(f"You killed {self.enemy.name}")
         self.engine.change_state("Adventure")
 
-    def __lose(self):
+    def lose(self):
         print(f"You lost to {self.enemy.name}")
 
     def show_all_skills(self):

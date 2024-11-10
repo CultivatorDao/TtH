@@ -1,6 +1,6 @@
 import components
 
-from entities import Mob
+from .mob import Mob
 
 
 class Character(Mob):

@@ -1,7 +1,5 @@
 from .map import Map
-
-
-from entities import Tree
+from entities.objects import Tree
 
 
 class World:
@@ -20,4 +18,5 @@ class World:
 
     @property
     def all_objects(self):
-        return [self.character, Tree(self)]
+        return [self.character, Tree(world=self)]
+

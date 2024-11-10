@@ -1,4 +1,4 @@
-from state import Command
+from state.command import Command
 
 
 class InputHandler:
