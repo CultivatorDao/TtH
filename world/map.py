@@ -102,5 +102,6 @@ class Map:
         _y = self.character_position.y
         if self.check_boundaries(x + _x, y + _y):
             self.character_position.move(x, y)
+            self.world.encounter()
         self.check_collisions()
 

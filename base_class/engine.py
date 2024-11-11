@@ -1,6 +1,8 @@
 import os
 import state as st
 
+from general.custom_types import StateType
+
 from base_class.input_handler import InputHandler
 from base_class.save_manager import SaveManager
 
@@ -17,7 +19,7 @@ class Engine:
         self.world = World(engine=self)
 
         self.save_manager = None
-        self.states = None
+        self.states: dict[StateType] = None
         self.default_state = None
         self.state = None
         self.dialogue = None

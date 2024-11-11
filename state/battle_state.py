@@ -1,6 +1,6 @@
 from .base_state import State
 
-# from entities.mobs.mob import Mob
+from entities.mobs.mob import Mob
 
 
 class BattleState(State):
@@ -10,7 +10,6 @@ class BattleState(State):
         self.name = "Battle"
         self.character = self.engine.character
         self.enemy = None
-        self.character.action.set_target(self.enemy)
 
         self.set_default([
             ["q", "Fist", self.character.action.fist_attack],
@@ -32,12 +31,20 @@ class BattleState(State):
             "lose": self.lose
         }
 
+    def set_enemy(self, enemy):
+        self.enemy = enemy
+        self.character.action.set_target(self.enemy)
+
     def win(self):
         print(f"You killed {self.enemy.name}")
+        self.__state = None
+        self.log = None
+        self.set_enemy(None)
         self.engine.change_state("Adventure")
 
     def lose(self):
-        print(f"You lost to {self.enemy.name}")
+        print(f"You died to {self.enemy.name}")
+        self.engine.exit()
 
     def show_all_skills(self):
         self.character.skills.show_all_skills()
@@ -71,16 +78,19 @@ class BattleState(State):
             self.__states[self.__state]()
 
     def perform(self, action):
-        # This action will open your skill list.
-        # We need other condition for this to avoid getting damage while choosing skill.
-        # TODO: Implement choosing other skill through dialog or sub-state in future.
-        if action and action.key == "r".upper():
+
+        if action.name is None:
+            self.log = None
+            return None
+
+        if action.key == "r".upper():
+            # This action will open your skill list.
+            # We need other condition for this to avoid getting damage while choosing skill.
+            # TODO: Implement choosing other skill through dialog or sub-state in future.
             action.execute()
-        if action and not action.key == "r".upper():
+        else:
             self.log = action.execute(), self.enemy.behavior(self.character)
             if not self.character.is_alive():
                 self.__state = "lose"
             if not self.enemy.is_alive():
                 self.__state = "win"
-        else:
-            self.log = None
