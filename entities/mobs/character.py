@@ -10,7 +10,7 @@ class Character(Mob):
 
         self.name = "Player"
 
-        self.position = components.PositionComponent(13, 13, parent=self)
+        self.position = components.PositionComponent(1, 20, parent=self)
         # self.health = components.HealthComponent(parent=self)
         # self.ki = components.KiComponent(parent=self)
         # self.physics = components.PhysicalComponent(parent=self)

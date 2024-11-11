@@ -1,11 +1,10 @@
 import os
-
+import state as st
 
 from base_class.input_handler import InputHandler
 from base_class.save_manager import SaveManager
 
 from world import World
-from state import AdventureState, BattleState
 from entities.mobs import Character
 
 # TODO: Add doc-strings and comment everywhere if they needed.
@@ -17,19 +16,36 @@ class Engine:
         self.character = Character()
         self.world = World(engine=self)
 
-        self.save_manager = SaveManager(engine=self)
-
-        # TODO: Improve state changing mechanism.
-        self.states = {
-            "Adventure": AdventureState(engine=self),
-            "Battle": BattleState(engine=self)
-        }
-        self.default_state = AdventureState(engine=self)
-        self.state = self.default_state
+        self.save_manager = None
+        self.states = None
+        self.default_state = None
+        self.state = None
         self.dialogue = None
-        self.input_handler = InputHandler(engine=self)
+        self.input_handler = None
+
+        self.__initialize()
 
         self.is_on = True
+
+    def __initialize(self, engine=None):
+        data = self if not engine else engine
+        self.save_manager = SaveManager(engine=data)
+
+        # TODO: Improve state changing mechanism.
+
+        self.states = {
+            "Adventure": st.AdventureState(engine=data),
+            "Battle": st.BattleState(engine=data),
+            "Menu": st.MenuState(engine=data)
+        }
+        self.default_state = self.states["Adventure"]
+        self.state = self.default_state
+        self.dialogue = None
+        self.input_handler = InputHandler(engine=data)
+
+    def open_menu(self):
+        self.states["Menu"].previous = self.state.name
+        self.change_state("Menu")
 
     def load(self):
         data: Engine = self.save_manager.load()
@@ -37,22 +53,14 @@ class Engine:
         self.character = data.character
         self.world = World(engine=data)
 
-        self.save_manager = SaveManager(engine=data)
-
-        self.states = {
-            "Adventure": AdventureState(engine=data),
-            "Battle": BattleState(engine=data)
-        }
-        self.default_state = self.states["Adventure"]
-        self.state = self.default_state
-        self.dialogue = data.dialogue
-        self.input_handler = InputHandler(engine=data)
+        self.__initialize(engine=data)
 
     def save(self):
         self.save_manager.save()
 
     def change_state(self, state):
         self.state = self.states[state]
+        self.input_handler = InputHandler(engine=self)
 
     def exit(self):
         self.is_on = False

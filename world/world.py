@@ -15,8 +15,9 @@ class World:
         # delete when finished with entity class
         self.character = self.engine.character
         self.map = Map(self)
+        self.all = [self.character, Tree(world=self)]
 
     @property
     def all_objects(self):
-        return [self.character, Tree(world=self)]
+        return self.all
 

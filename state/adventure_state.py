@@ -6,6 +6,7 @@ class AdventureState(State):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.name = "Adventure"
         self.world = self.engine.world.map
         self.character_position: PositionComponent = self.engine.character.position
         self.create_commands(
@@ -15,8 +16,6 @@ class AdventureState(State):
                 ["s", "Down", self.travel_down],
                 ["d", "Right", self.travel_right],
                 ["k", "Look Around", self.engine.world.map.check_collisions, True],
-                ["z", "Save", self.engine.save],
-                ["x", "Load", self.engine.load]
             ]
         )
 

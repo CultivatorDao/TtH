@@ -9,11 +9,9 @@ class InputHandler:
         self.commands = self.engine.state.commands
 
     def get_command(self):
-        # self.display_commands()
         command = input()
         if command:
             command = command[0]
-        # self.execute_command(command)
         for action in self.commands:
             if action.key == command.upper():
                 return action

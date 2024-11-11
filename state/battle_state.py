@@ -7,6 +7,7 @@ class BattleState(State):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.name = "Battle"
         self.character = self.engine.character
         self.enemy = None
         self.character.action.set_target(self.enemy)

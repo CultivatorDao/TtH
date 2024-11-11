@@ -23,7 +23,7 @@ class State:
         self.engine = engine
         self.name = ""
         self._default_instructions = [
-            ["~", "Exit", self.engine.exit],
+            ["~", "Menu", self.engine.open_menu],
         ]
         self.commands = []
         # TODO: Make alias for print. So when you want to change display method, do it through this alias.
