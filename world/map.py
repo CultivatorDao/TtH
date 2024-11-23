@@ -24,8 +24,15 @@ class Map:
                 and
                 _y - eyesight * 2 - 1 < obj.position.y < _y + eyesight * 2 + 1]
 
+    def check_zone(self):
+        pass
+
     def display_object(self, x, y):
         icon = "~"
+        if self.world.zones_around:
+            for zone in self.world.zones_around:
+                if zone.shape.has_point(x, y):
+                    icon = zone.ground_symbol
         for obj in self.objects_in_sight:
             if x == obj.position.x and y == obj.position.y:
                 icon = obj.icon
@@ -88,13 +95,13 @@ class Map:
     def character_sight(self):
         y_start, y_end, x_start, x_end = self.create_offset(self.character)
         print(self.character_position)
+        # print(self.world.zones_around)
 
         for y in range(y_start, y_end + 1):
             for x in range(x_start, x_end + 1):
                 if x_start == x:
                     print(" " * 40, end="")
-                if self.check_boundaries(x, y):
-                    self.display_object(x, y)
+                self.display_object(x, y)
             print()
 
     def move(self, x, y):

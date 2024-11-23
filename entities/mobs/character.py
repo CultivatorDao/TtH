@@ -1,6 +1,7 @@
 import components
 
 from .mob import Mob
+from general.shape import Eyesight
 
 
 class Character(Mob):
@@ -10,17 +11,12 @@ class Character(Mob):
 
         self.name = "Player"
 
-        self.position = components.PositionComponent(1, 20, parent=self)
-        # self.health = components.HealthComponent(parent=self)
-        # self.ki = components.KiComponent(parent=self)
-        # self.physics = components.PhysicalComponent(parent=self)
+        self.position = components.PositionComponent(26, 18, parent=self)
         self.cultivation = components.CultivationComponent(parent=self)
         self.lifespan = components.LifespanComponent(parent=self)
 
-        # self.skills = components.SkillComponent(parent=self)
-        # self.action = components.ActionComponent(parent=self)
-
         self.eyesight = 10
+        self.eyesight_shape = Eyesight(self.position.x, self.position.y, 2 * self.eyesight + 1)
 
         # Secondary characteristics
         self.toxicity = 0
@@ -28,3 +24,7 @@ class Character(Mob):
         self.inventory = []
 
         self.icon = "@"
+
+    def move_eyesight(self, x, y):
+        self.eyesight_shape.x = x
+        self.eyesight_shape.y = y

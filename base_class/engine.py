@@ -6,7 +6,7 @@ from general.custom_types import StateType
 from base_class.input_handler import InputHandler
 from base_class.save_manager import SaveManager
 
-from world import World
+from world.world import World
 from entities.mobs import Character
 
 # TODO: Add doc-strings and comment everywhere if they needed.
