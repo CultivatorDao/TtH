@@ -1,7 +1,7 @@
 import components
 
 from .mob import Mob
-from general.shapes.shape import Eyesight
+from general.shapes import Square
 
 
 class Character(Mob):
@@ -16,7 +16,7 @@ class Character(Mob):
         self.lifespan = components.LifespanComponent(parent=self)
 
         self.eyesight = 10
-        self.eyesight_shape = Eyesight(self.position.x, self.position.y, 2 * self.eyesight + 1)
+        self.eyesight_shape = Square(x=self.position.x, y=self.position.y, side_length=self.eyesight + 1)
 
         # Secondary characteristics
         self.toxicity = 0
