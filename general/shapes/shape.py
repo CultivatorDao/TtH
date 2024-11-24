@@ -3,21 +3,21 @@ import math
 
 class Shape:
 
-    def __init__(self, x, y, size):
+    def __init__(self, x, y, size=1, width=1, height=1):
 
         self.x = x
         self.y = y
 
-        self.width = 0
-        self.height = 0
+        self.width = width
+        self.height = height
 
         self.size = size
 
         self.center = True
 
     @property
-    def square(self):
-        return self.width * self.height
+    def rect_size(self):
+        return (self.width + (self.width % 2 == 0)) * (self.height + (self.height % 2 == 0))
 
     @property
     def top_left(self):
@@ -112,12 +112,10 @@ class Ellipse(Shape):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.width = 1
-        self.height = 1
 
     def has_point(self, x: int, y: int, null_center: bool = False) -> bool:
         x, y = self.set_cords(x, y)
-        return math.pow(x + y, 2) / self.width + math.pow(y + x, 2) / self.height <= self.size
+        return math.pow(x, 2) / self.width ** 2 + math.pow(y, 2) / self.height ** 2 <= self.size
 
 
 class Eyesight(Square):

@@ -1,7 +1,7 @@
 import components
 
 from .mob import Mob
-from general.shape import Eyesight
+from general.shapes.shape import Eyesight
 
 
 class Character(Mob):
