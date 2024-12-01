@@ -18,10 +18,6 @@ class BattleState(State):
             ["r", "All Skills", self.show_all_skills]
         ], blank=True)
 
-        self.create_commands(
-            [self.character.action.use_from_quick_slot(slot) for slot in "12345"]
-        )
-
         self.log = None
         self.display_spacing = 50
 
@@ -34,6 +30,9 @@ class BattleState(State):
     def set_enemy(self, enemy):
         self.enemy = enemy
         self.character.action.set_target(self.enemy)
+        self.create_commands(
+            [self.character.action.use_from_quick_slot(slot) for slot in "12345"]
+        )
 
     def win(self):
         print(f"You killed {self.enemy.name}")

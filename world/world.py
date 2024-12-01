@@ -2,6 +2,7 @@ import random
 
 from .map import Map
 from .zone_manager import ZoneManager
+from .chunk_manager import ChunkManager
 
 from entities.objects import Tree
 
@@ -13,10 +14,13 @@ class World:
     def __init__(self, engine):
         self.engine = engine
 
-        self.size = (60, 60)
+        self.size = (90, 90)
+        self.chunk_size = 30
 
         self.current_zone = None
         self.zone_manager = ZoneManager(world=self)
+
+        self.chunk_manager = ChunkManager(world=self)
 
         # TODO: Create Entity Manager that will simplify interaction with entities.
         #  For example: MobManager will divide mobs by some biome(range).

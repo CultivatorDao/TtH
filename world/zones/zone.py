@@ -1,6 +1,6 @@
 import colorama
 
-from general.shapes import Square, Circle
+from general.shapes import Square, Circle, Ellipse
 
 
 class Zone:
@@ -20,15 +20,16 @@ class Zone:
         self.x = x
         self.y = y
 
-        self.width = width
-        self.height = height
+        self.min_width = 20
+        self.min_height = 20
+
+        self.width = max(width, self.min_width)
+        self.height = max(height, self.min_height)
         self.shape = None
 
         self.objects = None
         self.structures = None
         self.mobs = None
-
-        self.chunks = None
 
         self.ground_symbol = "~"
 
@@ -40,7 +41,7 @@ class Zone:
     def get_all_zones(cls):
         return cls.__subclasses__()
 
-    def generate_chunks(self):
+    def generate(self):
         pass
 
 
@@ -72,7 +73,7 @@ class Desert(Zone):
         super().__init__(*args, **kwargs)
         self.name = "Desert"
 
-        self.shape = Circle(x=self.x, y=self.y, radius=10)
+        self.shape = Ellipse(x=self.x, y=self.y, width=10, height=20)
 
         self.ground_symbol = self.color("yellow", "~")
 

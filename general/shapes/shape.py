@@ -1,35 +1,23 @@
+from components.geometry_component import GeometryComponent
+
+
 class Shape:
 
     def __init__(self, x, y, width=1, height=1, corner=True):
 
-        self.x = x
-        self.y = y
-
-        self.width = width
-        self.height = height
+        self.geometry = GeometryComponent(x=x,
+                                          y=y,
+                                          width=width,
+                                          height=height)
 
         self.corner = corner
 
-    @property
-    def rect_size(self):
-        return (self.width + (self.width % 2 == 0)) * (self.height + (self.height % 2 == 0))
-
-    @property
-    def top_left(self):
-        return (self.x, self.y) if self.corner \
-            else (self.x - self.width // 2, self.y - self.height // 2)
-
-    @property
-    def bottom_right(self):
-        return (self.x + self.width - (self.width % 2 != 0), self.y + self.height - (self.height % 2)) if self.corner \
-            else (self.x + self.width // 2, self.y + self.height // 2)
-
     def set_cords(self, x, y):
-        x -= self.x
-        y -= self.y
+        x -= self.geometry.x
+        y -= self.geometry.y
         if self.corner:
-            x -= self.width // 2
-            y -= self.height // 2
+            x -= self.geometry.width // 2
+            y -= self.geometry.height // 2
         return x, y
 
     def has_point(self, x: int, y: int, null_center: bool = False) -> bool:
@@ -37,10 +25,10 @@ class Shape:
 
     def intersects_with(self, area):
 
-        x1, y1 = self.top_left
-        x2, y2 = self.bottom_right
-        x3, y3 = area.top_left
-        x4, y4 = area.bottom_right
+        x1, y1 = self.geometry.top_left
+        x2, y2 = self.geometry.bottom_right
+        x3, y3 = area.geometry.top_left
+        x4, y4 = area.geometry.bottom_right
 
         left = max(x1, x3)
         right = min(x2, x4)
