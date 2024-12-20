@@ -14,8 +14,8 @@ class World:
     def __init__(self, engine):
         self.engine = engine
 
-        self.size = (90, 90)
-        self.chunk_size = 30
+        self.size = (100, 100)
+        self.chunk_size = 50
 
         self.current_zone = None
         self.zone_manager = ZoneManager(world=self)
@@ -40,8 +40,21 @@ class World:
         return self.all
 
     @property
+    def chunks_around(self):
+        return self.chunk_manager.nearest_chunks(self.character.position.x, self.character.position.y)
+
+    @property
+    def chunks_in_sight(self):
+        return [chunk for chunk in self.chunks_around if self.character.eyesight_shape.intersects_with(chunk)]
+
+    @property
     def zones_around(self):
-        return self.zone_manager.get_nearby_zones(self.character)
+        # return self.zone_manager.get_nearby_zones(self.character)
+        zones = []
+        for chunk in self.chunks_in_sight:
+            zones.extend(chunk.zones)
+
+        return sorted(set(zones), key=lambda x: x.z_index)
 
     def encounter(self):
         if random.randint(0, 1) == 2:

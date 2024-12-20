@@ -18,7 +18,8 @@ class Chunk:
                                           width=self.size,
                                           height=self.size)
 
-        self.zones = self.zones_in_chunk()
+        self.zones = []
+        self.zones_in_chunk()
 
         self.mobs = None
         self.objects = None
@@ -28,4 +29,16 @@ class Chunk:
         return f"x_start: {self.x_start}; y_start: {self.y_start}\nx_end: {self.x_end}; y_end: {self.y_end}"
 
     def zones_in_chunk(self):
-        return [zone for zone in self.manager.world.zone_manager.zones if zone.shape.intersects_with(self)]
+        for zone in self.manager.world.zone_manager.zones:
+            if zone.shape.intersects_with(self):
+
+                # self.mobs = zone.mobs
+                # self.objects = zone.objects
+                # self.structures = zone.structures
+                #
+                # zone.mobs.clear()
+                # zone.objects.clear()
+                # zone.structures.clear()
+
+                self.zones.append(zone)
+        # return [zone for zone in self.manager.world.zone_manager.zones if zone.shape.intersects_with(self)]

@@ -15,8 +15,13 @@ class Character(Mob):
         self.cultivation = components.CultivationComponent(parent=self)
         self.lifespan = components.LifespanComponent(parent=self)
 
-        self.eyesight = 10
-        self.eyesight_shape = Square(x=self.position.x, y=self.position.y, side_length=self.eyesight + 1)
+        self.eyesight = 30
+        self.eyesight_shape = Square(
+            x=self.position.x,
+            y=self.position.y,
+            side_length=2 * self.eyesight + 1,
+            corner=False
+        )
 
         # Secondary characteristics
         self.toxicity = 0
@@ -26,5 +31,5 @@ class Character(Mob):
         self.icon = "@"
 
     def move_eyesight(self, x, y):
-        self.eyesight_shape.x = x
-        self.eyesight_shape.y = y
+        self.eyesight_shape.geometry.x = x
+        self.eyesight_shape.geometry.y = y

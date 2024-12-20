@@ -33,6 +33,12 @@ class Map:
             for zone in self.world.zones_around:
                 if zone.shape.has_point(x, y):
                     icon = zone.ground_symbol
+        for chunk in self.world.chunks_around:
+            for zone in chunk.zones:
+                if zone.objects.get((x, y)):
+                    icon = zone.objects[(x, y)][0].icon
+        # if self.character.eyesight_shape.has_point(x, y):
+        #     icon = "&"
         for obj in self.objects_in_sight:
             if x == obj.position.x and y == obj.position.y:
                 icon = obj.icon
@@ -93,8 +99,12 @@ class Map:
         return y_start, y_end, x_start, x_end
 
     def character_sight(self):
+        import sys
         y_start, y_end, x_start, x_end = self.create_offset(self.character)
         print(self.character_position)
+        # print(self.character.eyesight_shape.geometry)
+        # print(*self.world.chunks_in_sight, sep="\n")
+        # [print(self.character.eyesight_shape.intersects_with(chunk)) for chunk in self.world.chunks_around]
         # print(self.world.zones_around)
 
         for y in range(y_start, y_end + 1):

@@ -13,6 +13,7 @@ class ChunkManager:
         self.chunk_size = self.world.chunk_size
 
         self.chunks = []
+        self.generate_chunks()
 
     @property
     def max_chunk_position(self):
@@ -56,5 +57,7 @@ class ChunkManager:
                 # Position cannot be negative and bigger than max chunks amount.
                 if 0 <= current_position[0] + _x <= self.max_chunk_position[1] \
                         and 0 <= current_position[1] + _y <= self.max_chunk_position[0]:
-                    chunks.append(self.chunks[current_position[1] - _y][current_position[0] - _x])
+                    # print(self.chunks)
+                    # print(current_position[1] - _y, current_position[0] - _x)
+                    chunks.append(self.chunks[current_position[1] + _y][current_position[0] + _x])
         return chunks

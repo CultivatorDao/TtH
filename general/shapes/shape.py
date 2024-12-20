@@ -5,12 +5,14 @@ class Shape:
 
     def __init__(self, x, y, width=1, height=1, corner=True):
 
-        self.geometry = GeometryComponent(x=x,
-                                          y=y,
-                                          width=width,
-                                          height=height)
-
         self.corner = corner
+
+        self.geometry = GeometryComponent(
+            parent=self,
+            x=x,
+            y=y,
+            width=width,
+            height=height)
 
     def set_cords(self, x, y):
         x -= self.geometry.x
@@ -45,7 +47,7 @@ class Shape:
 
         # print(f"width: {width}\nheight: {height}")
 
-        if width * height >= 0:
+        if width >= 0 and height >= 0:
             return True
         else:
             return False

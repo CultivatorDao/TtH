@@ -3,7 +3,7 @@ from .base_component import BaseComponent
 
 class GeometryComponent(BaseComponent):
 
-    def __init__(self, x, y, width, height, *args, **kwargs):
+    def __init__(self, x, y, width, height, corner=True, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.x = x
@@ -15,7 +15,10 @@ class GeometryComponent(BaseComponent):
         if hasattr(self.parent, "corner"):
             self.corner = self.parent.corner
         else:
-            self.corner = True
+            self.corner = corner
+
+    def __str__(self):
+        return f"x: {self.x} y: {self.y}"
 
     @property
     def rect_size(self):
