@@ -31,15 +31,15 @@ class AdventureState(State):
     def travel_left(self):
         self.world.move(-1, 0)
 
-    def display_actions(self):
+    def display_actions(self, console):
         print(*self.commands)
 
-    def display_sight(self):
-        self.world.character_sight()
+    def display_sight(self, console):
+        self.world.character_sight(console)
 
-    def display(self, *args, **kwargs):
-        self.display_sight()
-        self.display_actions()
+    def display(self, console, *args, **kwargs):
+        self.display_sight(console=console)
+        # self.display_actions(console=console)
         if self.engine.dialogue:
             self.engine.dialogue.show()
 
@@ -50,5 +50,5 @@ class AdventureState(State):
             return True
 
     def perform(self, action):
-        if self.handle_dialogue(action):
+        if self.handle_dialogue(action) and action.name is not None:
             action.execute()

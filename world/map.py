@@ -27,24 +27,27 @@ class Map:
     def check_zone(self):
         pass
 
-    def display_object(self, x, y):
+    def display_object(self, x, y, console=None):
         icon = "~"
         if self.world.zones_around:
             for zone in self.world.zones_around:
                 if zone.shape.has_point(x, y):
                     icon = zone.ground_symbol
-        for chunk in self.world.chunks_around:
-            for zone in chunk.zones:
-                if zone.objects.get((x, y)):
-                    icon = zone.objects[(x, y)][0].icon
+        if x == self.character_position.x and y == self.character_position.y:
+            icon = '@'
+        # for chunk in self.world.chunks_around:
+        #     for zone in chunk.zones:
+        #         if zone.objects.get((x, y)):
+        #             icon = zone.objects[(x, y)][0].icon
         # if self.character.eyesight_shape.has_point(x, y):
         #     icon = "&"
-        for obj in self.objects_in_sight:
-            if x == obj.position.x and y == obj.position.y:
-                icon = obj.icon
-                break
+        # for obj in self.objects_in_sight:
+        #     if x == obj.position.x and y == obj.position.y:
+        #         icon = obj.icon
+        #         break
 
-        print(icon, end=" ")
+        # print(icon, end=" ")
+        console.print(x=x, y=y, string=icon)
 
     # def show_map(self):
     #     for y in range(self.height):
@@ -74,10 +77,10 @@ class Map:
         :param character: object
         :return: (int, int, int, int)
         """
-        y_start = character.position.y - character.eyesight
-        y_end = character.position.y + character.eyesight
-        x_start = character.position.x - character.eyesight
-        x_end = character.position.x + character.eyesight
+        y_start = character.position.y - character.eyesight_shape.geometry.height
+        y_end = character.position.y + character.eyesight_shape.geometry.height
+        x_start = character.position.x - character.eyesight_shape.geometry.width
+        x_end = character.position.x + character.eyesight_shape.geometry.width
         # Offset alignment
         if y_start <= 0:
             y_end += abs(0 - y_start)
@@ -98,10 +101,10 @@ class Map:
 
         return y_start, y_end, x_start, x_end
 
-    def character_sight(self):
+    def character_sight(self, console=None):
         import sys
         y_start, y_end, x_start, x_end = self.create_offset(self.character)
-        print(self.character_position)
+        # print(self.character_position)
         # print(self.character.eyesight_shape.geometry)
         # print(*self.world.chunks_in_sight, sep="\n")
         # [print(self.character.eyesight_shape.intersects_with(chunk)) for chunk in self.world.chunks_around]
@@ -109,10 +112,10 @@ class Map:
 
         for y in range(y_start, y_end + 1):
             for x in range(x_start, x_end + 1):
-                if x_start == x:
-                    print(" " * 40, end="")
-                self.display_object(x, y)
-            print()
+                # if x_start == x:
+                #     print(" " * 40, end="")
+                self.display_object(x, y, console)
+            # print()
 
     def move(self, x, y):
         _x = self.character_position.x

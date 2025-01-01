@@ -41,6 +41,7 @@ class Zone:
         self.mobs = EntityManager()
 
         self.ground_symbol = "~"
+        self.fg = ()
 
     @staticmethod
     def color(color: str, symbol: str):
@@ -85,6 +86,8 @@ class Ocean(Zone):
         self.shape = Square(x=self.x, y=self.y, side_length=self.width)
 
         self.ground_symbol = self.color("blue", "~")
+        self.ground_symbol = "."
+        self.fg = (0, 0, 255)
 
 
 class Wastelands(Zone):
@@ -96,6 +99,8 @@ class Wastelands(Zone):
         self.shape = Square(x=self.x, y=self.y, side_length=self.width)
 
         self.ground_symbol = self.color("green", "~")
+        self.ground_symbol = "."
+        self.fg = (0, 255, 0)
 
 
 class Desert(Zone):
@@ -107,6 +112,8 @@ class Desert(Zone):
         self.shape = Ellipse(x=self.x, y=self.y, width=self.width, height=self.height)
 
         self.ground_symbol = self.color("yellow", "~")
-        self.generate_entities()
+        self.ground_symbol = "."
+        self.fg = (255, 255, 0)
+        # self.generate_entities()
 
 

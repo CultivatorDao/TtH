@@ -1,7 +1,7 @@
 import components
 
 from .mob import Mob
-from general.shapes import Square
+from general.shapes import Square, Rectangle
 
 
 class Character(Mob):
@@ -15,11 +15,13 @@ class Character(Mob):
         self.cultivation = components.CultivationComponent(parent=self)
         self.lifespan = components.LifespanComponent(parent=self)
 
-        self.eyesight = 30
-        self.eyesight_shape = Square(
+        self.eyesight = 35
+        self.eyesight_shape = Rectangle(
             x=self.position.x,
             y=self.position.y,
-            side_length=2 * self.eyesight + 1,
+            width=50,
+            height=20,
+            # side_length=2 * self.eyesight + 1,
             corner=False
         )
 

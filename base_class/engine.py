@@ -1,6 +1,8 @@
 import os
 import state as st
 
+import tcod.context
+
 from general.custom_types import StateType
 
 from base_class.input_handler import InputHandler
@@ -13,6 +15,9 @@ from entities.mobs import Character
 
 
 class Engine:
+
+    WIDTH, HEIGHT = 720, 480  # Window pixel resolution (when not maximized.)
+    FLAGS = tcod.context.SDL_WINDOW_RESIZABLE | tcod.context.SDL_WINDOW_MAXIMIZED
 
     def __init__(self):
         self.character = Character()
@@ -68,12 +73,22 @@ class Engine:
         self.is_on = False
 
     def main(self):
-        while self.is_on:
-            os.system("cls")
+        # while self.is_on:
+        #     os.system("cls")
+        #
+        #     # get_command returns function that will be called in state.perform
+        #     self.state.display()
+        #     self.state.perform(self.input_handler.get_command())
 
-            # get_command returns function that will be called in state.perform
-            self.state.display()
-            self.state.perform(self.input_handler.get_command())
+        with tcod.context.new(  # New window with pixel resolution of width×height.
+                width=self.WIDTH, height=self.HEIGHT, sdl_window_flags=self.FLAGS
+        ) as context:
+            while True:
+                console = context.new_console(order="F")  # Console size based on window resolution and tile size.
+                self.state.display(console)
+                context.present(console, integer_scaling=True)
+
+                self.state.perform(self.input_handler.get_command(context))
 
     def run(self):
         self.main()
