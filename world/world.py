@@ -35,26 +35,37 @@ class World:
         self.map = Map(self, width=self.size[0], height=self.size[1])
         self.all = [self.character, Tree(world=self)]
 
+        self.__chunks_around = None
+        self.__chunks_in_sight = None
+        self.__zones_around = None
+
     @property
     def all_objects(self):
         return self.all
 
     @property
     def chunks_around(self):
-        return self.chunk_manager.nearest_chunks(self.character.position.x, self.character.position.y)
+        if not self.__chunks_around:
+            self.__chunks_around = self.chunk_manager.nearest_chunks(self.character.position.x, self.character.position.y)
+        return self.__chunks_around
 
     @property
     def chunks_in_sight(self):
-        return [chunk for chunk in self.chunks_around if self.character.eyesight_shape.intersects_with(chunk)]
+        if not self.__chunks_in_sight:
+            self.__chunks_in_sight = [chunk for chunk in self.chunks_around if self.character.eyesight_shape.intersects_with(chunk)]
+        return self.__chunks_in_sight
 
     @property
     def zones_around(self):
         # return self.zone_manager.get_nearby_zones(self.character)
-        zones = []
-        for chunk in self.chunks_in_sight:
-            zones.extend(chunk.zones)
+        if not self.__zones_around:
+            zones = []
+            for chunk in self.chunks_in_sight:
+                zones.extend(chunk.zones)
 
-        return sorted(set(zones), key=lambda x: x.z_index)
+            self.__zones_around = sorted(set(zones), key=lambda x: x.z_index)
+
+        return self.__zones_around
 
     def encounter(self):
         if random.randint(0, 1) == 2:
