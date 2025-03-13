@@ -19,6 +19,8 @@ class Engine:
     WIDTH, HEIGHT = 720, 480  # Window pixel resolution (when not maximized.)
     FLAGS = tcod.context.SDL_WINDOW_RESIZABLE | tcod.context.SDL_WINDOW_MAXIMIZED
 
+    VIEWPORT_WIDTH, VIEWPORT_HEIGHT = 240, 60
+
     def __init__(self):
         self.character = Character()
         self.world = World(engine=self)

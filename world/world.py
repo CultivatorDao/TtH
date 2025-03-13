@@ -8,6 +8,8 @@ from entities.objects import Tree
 
 from entities.mobs.slime import Slime
 
+from .map_generator import MapGenerator
+
 
 class World:
 
@@ -16,6 +18,10 @@ class World:
 
         self.size = (100, 100)
         self.chunk_size = 50
+
+        self.map_generator = MapGenerator(width=100, height=50, seed=0, tile_size=16, magnification=16)
+        self.width = self.map_generator.width * self.map_generator.magnification
+        self.height = self.map_generator.height * self.map_generator.magnification
 
         self.current_zone = None
         self.zone_manager = ZoneManager(world=self)
@@ -32,7 +38,8 @@ class World:
         self.mobs = None
 
         self.character = self.engine.character
-        self.map = Map(self, width=self.size[0], height=self.size[1])
+        # self.map = Map(self, width=self.size[0], height=self.size[1])
+        self.map = Map(self, width=self.width, height=self.height)
         self.all = [self.character, Tree(world=self)]
 
         self.__chunks_around = None

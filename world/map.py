@@ -10,7 +10,11 @@ class Map:
         self.width = width
         self.height = height
 
+        self.world_map, self.start_position = self.world.map_generator.generate(octaves=1)
+
+        self.world.character.position.set_position(self.start_position[0], self.start_position[1])
         self.character = self.world.character
+
         self.character_position = self.character.position
 
     @property
@@ -77,10 +81,16 @@ class Map:
         :param character: object
         :return: (int, int, int, int)
         """
-        y_start = character.position.y - character.eyesight_shape.geometry.height
-        y_end = character.position.y + character.eyesight_shape.geometry.height
-        x_start = character.position.x - character.eyesight_shape.geometry.width
-        x_end = character.position.x + character.eyesight_shape.geometry.width
+        # y_start = character.position.y - character.eyesight_shape.geometry.height
+        # y_end = character.position.y + character.eyesight_shape.geometry.height
+        # x_start = character.position.x - character.eyesight_shape.geometry.width
+        # x_end = character.position.x + character.eyesight_shape.geometry.width
+
+        y_start = character.position.y - self.engine.VIEWPORT_HEIGHT
+        y_end = character.position.y + self.engine.VIEWPORT_HEIGHT
+        x_start = character.position.x - self.engine.VIEWPORT_WIDTH
+        x_end = character.position.x + self.engine.VIEWPORT_WIDTH
+
         # Offset alignment
         if y_start <= 0:
             y_end += abs(0 - y_start)
@@ -102,7 +112,7 @@ class Map:
         return y_start, y_end, x_start, x_end
 
     def character_sight(self, console=None):
-        import sys
+        # import sys
         y_start, y_end, x_start, x_end = self.create_offset(self.character)
         # print(self.character_position)
         # print(self.character.eyesight_shape.geometry)
@@ -110,18 +120,35 @@ class Map:
         # [print(self.character.eyesight_shape.intersects_with(chunk)) for chunk in self.world.chunks_around]
         # print(self.world.zones_around)
 
-        for y in range(y_start, y_end + 1):
-            for x in range(x_start, x_end + 1):
-                # if x_start == x:
-                #     print(" " * 40, end="")
-                self.display_object(x, y, console)
-            # print()
+        # for y in range(y_start, y_end + 1):
+        #     for x in range(x_start, x_end + 1):
+        #         # if x_start == x:
+        #         #     print(" " * 40, end="")
+        #         self.display_object(x, y, console)
+        #     # print()
+
+        for y in range(-(self.engine.VIEWPORT_HEIGHT // 2), self.engine.VIEWPORT_HEIGHT // 2 + 1):
+            for x in range(-(self.engine.VIEWPORT_WIDTH // 2), self.engine.VIEWPORT_WIDTH // 2 + 1):
+                tile = self.world_map\
+                    [(x + self.character_position.x) % self.width] \
+                    [(y + self.character_position.y) % self.height]\
+                    .bg_color
+
+                console.print(x + self.engine.VIEWPORT_WIDTH // 2, y + self.engine.VIEWPORT_HEIGHT // 2, " ", bg=tile)
+        console.print(self.engine.VIEWPORT_WIDTH // 2, self.engine.VIEWPORT_HEIGHT // 2, "@", fg=(0, 0, 0))
+
+    def check_passability(self, x, y):
+        return True
 
     def move(self, x, y):
-        _x = self.character_position.x
-        _y = self.character_position.y
-        if self.check_boundaries(x + _x, y + _y):
-            self.character_position.move(x, y)
-            self.world.encounter()
-        self.check_collisions()
-
+        # _x = self.character_position.x
+        # _y = self.character_position.y
+        _x = (self.character_position.x + x) % self.width
+        _y = (self.character_position.y + y) % self.height
+        if self.check_passability(_x, _y):
+            self.character_position.set_position(_x, _y)
+            print(self.character_position)
+        # if self.check_boundaries(x + _x, y + _y):
+        #     self.character_position.move(x, y)
+        #     self.world.encounter()
+        # self.check_collisions()

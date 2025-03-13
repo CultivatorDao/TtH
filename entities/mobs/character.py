@@ -11,7 +11,7 @@ class Character(Mob):
 
         self.name = "Player"
 
-        self.position = components.PositionComponent(26, 18, parent=self)
+        self.position = components.PositionComponent(parent=self)
         self.cultivation = components.CultivationComponent(parent=self)
         self.lifespan = components.LifespanComponent(parent=self)
 

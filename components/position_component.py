@@ -18,5 +18,9 @@ class PositionComponent(BaseComponent):
         if hasattr(self.parent, "eyesight_shape"):
             self.parent.move_eyesight(self.x, self.y)
 
+    def set_position(self, x, y):
+        self.x = x
+        self.y = y
+
     def __str__(self):
         return f"x: {self.x}, y: {self.y}"
