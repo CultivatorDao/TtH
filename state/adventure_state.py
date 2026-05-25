@@ -15,7 +15,7 @@ class AdventureState(State):
                 ["a", "Left", self.travel_left],
                 ["s", "Down", self.travel_down],
                 ["d", "Right", self.travel_right],
-                ["k", "Look Around", self.engine.world.map.check_collisions, True],
+                # ["k", "Look Around", self.engine.world.map.check_collisions, True],
             ]
         )
 

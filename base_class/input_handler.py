@@ -27,11 +27,3 @@ class InputHandler:
                 return Command(key=sym.lower())
 
         return Command(key='')
-
-        # command = input()
-        # if command:
-        #     command = command[0]
-        # for action in self.commands:
-        #     if action.key == command.upper():
-        #         return action
-        # return Command(key=command.lower())

@@ -268,6 +268,8 @@ while year < maxYear:
                                 else:
                                     print('Not enough gold')
                                     mov = str(input())
+                            elif mov == "no":
+                                break
                             else:
                                 print('Unknown action')
                                 mov = str(input())
@@ -1418,7 +1420,7 @@ while year < maxYear:
             mov = str(input())
             print('--------------------------------------------------------------------------')
             if mov == 'u':
-                indI = int(input('Chose item: '))
+                indI = (int(input('Chose item: ')) - 1) * 2
                 print('--------------------------------------------------------------------------')
                 uItem = inventory[indI]
                 tipe = type(uItem)
@@ -2179,11 +2181,11 @@ while year < maxYear:
             if a == 4:
                 dChance = randrange(-1, len(medQual))
                 loot = medQual[dChance]
-                a = randrange(0, 10)
-                if a == 1 or a == 5:
-                    loot = rareTruffle
-                elif a == 3:
-                    loot = rareStealShade
+                # a = randrange(0, 10)
+                # if a == 1 or a == 5:
+                #     loot = rareTruffle
+                # elif a == 3:
+                #     loot = rareStealShade
         elif dChance == 3 or dChance == 4:
                 dChance = randrange(-1, len(lowQual))
                 loot = lowQual[dChance]
@@ -2260,7 +2262,7 @@ while year < maxYear:
                     if mov == 'e':
                         mov = 'i'
                         break
-                    mov = int(mov)
+                    mov = (int(mov) - 1) * 2
                     ie = inventory[mov]
                     tipe = type(ie)
                     if tipe != '%':
@@ -2345,7 +2347,7 @@ while year < maxYear:
                     if mov == 'e':
                         mov = 'i'
                         break
-                    mov = int(mov)
+                    mov = (int(mov) - 1) * 2
                     ie = inventory[mov]
                     tipe = type(ie)
                     pillType = useful(ie)
@@ -2415,7 +2417,7 @@ while year < maxYear:
                     if mov == 'e':
                         mov = 'i'
                         break
-                    mov = int(mov)
+                    mov = (int(mov) - 1) * 2
                     ri = inventory[mov]
                     tipe = useful(ri)
                     if tipe != '*`':

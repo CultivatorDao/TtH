@@ -1,6 +1,7 @@
 def eff(ing):
     emp = []
     eff = ''
+    fif = ''
     for i in ing:
         if '1234567890.'.find(i) != -1:
             emp.append(i)

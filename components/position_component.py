@@ -12,12 +12,6 @@ class PositionComponent(BaseComponent):
     def position(self):
         return self.x, self.y
 
-    def move(self, x, y):
-        self.x += x
-        self.y += y
-        if hasattr(self.parent, "eyesight_shape"):
-            self.parent.move_eyesight(self.x, self.y)
-
     def set_position(self, x, y):
         self.x = x
         self.y = y

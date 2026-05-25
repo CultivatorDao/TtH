@@ -1,4 +1,4 @@
-from color import Color
+from old.color import Color
 
 PressurePoint = ['Pressure Point ', 'atk', 10, 5, Color.White, 300, 'Neutral']
 PressurePoint1 = ['Pressure Point', 'atk', 50, 15, Color.Red, 550, 'Neutral']

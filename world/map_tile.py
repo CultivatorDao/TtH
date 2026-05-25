@@ -1,7 +1,7 @@
 class MapTile:
 
-    def __init__(self, color):
-        self.bg_color = color
+    def __init__(self, biome):
+        self.biome = biome
 
     def update(self):
         pass

@@ -1,4 +1,3 @@
-import os
 import state as st
 
 import tcod.context
@@ -20,6 +19,9 @@ class Engine:
     FLAGS = tcod.context.SDL_WINDOW_RESIZABLE | tcod.context.SDL_WINDOW_MAXIMIZED
 
     VIEWPORT_WIDTH, VIEWPORT_HEIGHT = 240, 60
+    INITIAL_WORLD_SIZE = 5
+    LOAD_DISTANCE = 2
+    RENDERING_DISTANCE = LOAD_DISTANCE * 2 + 1
 
     def __init__(self):
         self.character = Character()
@@ -75,13 +77,6 @@ class Engine:
         self.is_on = False
 
     def main(self):
-        # while self.is_on:
-        #     os.system("cls")
-        #
-        #     # get_command returns function that will be called in state.perform
-        #     self.state.display()
-        #     self.state.perform(self.input_handler.get_command())
-
         with tcod.context.new(  # New window with pixel resolution of width×height.
                 width=self.WIDTH, height=self.HEIGHT, sdl_window_flags=self.FLAGS
         ) as context:
