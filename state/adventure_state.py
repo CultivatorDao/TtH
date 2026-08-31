@@ -15,6 +15,8 @@ class AdventureState(State):
                 ["a", "Left", self.travel_left],
                 ["s", "Down", self.travel_down],
                 ["d", "Right", self.travel_right],
+                ["i", "CHUNK", self.display_chunk],
+                ["m", "map", self.display_map]
                 # ["k", "Look Around", self.engine.world.map.check_collisions, True],
             ]
         )
@@ -33,6 +35,28 @@ class AdventureState(State):
 
     def display_actions(self, console):
         print(*self.commands)
+
+    def display_chunk(self):
+        print(f"Character pos: {self.character_position}")
+        chunk_x = self.character_position.x // 100
+        chunk_y = self.character_position.y // 50
+        print(f"chunk_x: {chunk_x} chunk_y: {chunk_y}")
+        for y in range(chunk_y * 50, (chunk_y + 1) * 50):
+            for x in range(chunk_x * 100, (chunk_x + 1) * 100):
+                if self.world.world_map[x][y].biome.name == "Ocean":
+                    print("0", end="")
+                else:
+                    print("1", end="")
+            print()
+
+    def display_map(self):
+        for y in range(250):
+            for x in range(500):
+                if self.world.world_map[x][y].biome.name == "Ocean":
+                    print("0", end="")
+                else:
+                    print("1", end="")
+            print()
 
     def display_sight(self, console):
         self.world.character_sight(console)

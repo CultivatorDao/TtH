@@ -18,6 +18,9 @@ class World:
                                           seed=0, tile_size=16, magnification=8)
         self.chunk_width = self.map_generator.chunk_width
         self.chunk_height = self.map_generator.chunk_height
+
+        self.chunks_size = self.map_generator.magnification
+
         self.width = self.map_generator.width * self.map_generator.magnification
         self.height = self.map_generator.height * self.map_generator.magnification
 

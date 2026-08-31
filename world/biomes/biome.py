@@ -25,7 +25,7 @@ class Ocean(Biome):
 
     def __init__(self):
         super().__init__()
-        self.name = "Name"
+        self.name = "Ocean"
         self.temperature = 0
         self.passability = 1
         self.bg_color = (0, 0, 255)
@@ -35,7 +35,7 @@ class Land(Biome):
 
     def __init__(self):
         super().__init__()
-        self.name = "Name"
+        self.name = "Land"
         self.temperature = 0
         self.passability = 0
         self.bg_color = (0, 255, 0)
