@@ -39,3 +39,13 @@ class Land(Biome):
         self.temperature = 0
         self.passability = 0
         self.bg_color = (0, 255, 0)
+
+
+class EmptyBiome(Biome):
+
+    def __init__(self):
+        super().__init__()
+        self.name = "Empty"
+        self.temperature = 0
+        self.passability = 0
+        self.bg_color = (0, 0, 0)
