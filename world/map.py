@@ -32,15 +32,8 @@ class Map:
         self.last_update_pos = None
         self.vertical_chunks = []
         self.horizontal_chunks = []
-        self.new_chunks = []
 
-        self.world_map = None
-        self.create_world_map()
-        # self.world_map = self.load_map()
-
-        # self.character.set_position(200, 153)
-        # self.character.global_position.set_position(200, 153)
-        # self.world_map = self.load_map()
+        self.world_map = self.create_world_map()
 
     @property
     def loaded_chunks(self):
@@ -88,9 +81,9 @@ class Map:
         self.last_update_pos = self.get_chunk_cords()
 
         self.save_map(world_map, world_size=self.engine.INITIAL_WORLD_SIZE)
-        self.world_map = self.load_map()
+        return self.load_map()
 
-    def update_chunks_cords(self, x_direction, y_direction):
+    def update_chunks_cords(self):
         self.vertical_chunks.clear()
         self.horizontal_chunks.clear()
 
@@ -118,8 +111,10 @@ class Map:
 
         with shelve.open("world_map", writeback=True) as db:
 
-            for index in range(len(self.loaded_chunks)):
-                chunk_cords = self.loaded_chunks[index]
+            new_chunks = self.horizontal_chunks + self.vertical_chunks
+
+            for index in range(len(new_chunks)):
+                chunk_cords = new_chunks[index]
                 if db.get(f"chunk{chunk_cords[0]}_{chunk_cords[1]}") is None:
                     db[f"chunk{chunk_cords[0]}_{chunk_cords[1]}"] = self.world.map_generator.generate_by_chunk(chunk_cords[0], chunk_cords[1])
 
@@ -137,31 +132,16 @@ class Map:
 
         return np.block(area)
 
-    def update_map(self, x_direction, y_direction, world_copy):
+    def update_map(self, world_copy):
         chunk_x, chunk_y = self.get_chunk_cords()
 
         x_shift = (chunk_x - self.last_update_pos[0])
         y_shift = (chunk_y - self.last_update_pos[1])
-
         x_shift = x_shift if abs(x_shift) in (0, 1) else -(x_shift // abs(x_shift))
         y_shift = y_shift if abs(y_shift) in (0, 1) else -(y_shift // abs(y_shift))
 
-        horizontal_area = [
-            None for _ in range(self.engine.RENDERING_DISTANCE)
-        ]
-
-        vertical_area = [
-            None for _ in range(self.engine.RENDERING_DISTANCE)
-        ]
-
-        print(f"x_shift: {x_shift} y_shift: {y_shift}")
-        print("Horizontal chunks:")
-        for row in range(len(self.horizontal_chunks)):
-            print(self.horizontal_chunks[row], end=" ")
-        print()
-        print("Vertical chunks:")
-        for column in range(len(self.vertical_chunks)):
-            print(self.vertical_chunks[column])
+        horizontal_area = []
+        vertical_area = []
 
         with shelve.open("world_map", writeback=False, flag='r') as db:
 
@@ -169,58 +149,45 @@ class Map:
 
                 if x_shift:
                     chunk_cord = self.vertical_chunks[index]
-                    vertical_area[index] = db[f"chunk{chunk_cord[0]}_{chunk_cord[1]}"]
+                    if not ((y_shift == -1 and index == 0) or
+                            (y_shift == 1 and index == self.engine.RENDERING_DISTANCE - 1)):
+                        vertical_area.append(db[f"chunk{chunk_cord[0]}_{chunk_cord[1]}"])
                 if y_shift:
                     chunk_cord = self.horizontal_chunks[index]
-                    horizontal_area[index] = db[f"chunk{chunk_cord[0]}_{chunk_cord[1]}"]
+                    horizontal_area.append(db[f"chunk{chunk_cord[0]}_{chunk_cord[1]}"])
+
+        if y_shift == 1:
+            world_copy = world_copy[:, 50:].copy()
+        elif y_shift == -1:
+            world_copy = world_copy[:, :-50].copy()
 
         if x_shift:
             vertical_area = np.concatenate(vertical_area, axis=1)
         if y_shift:
             horizontal_area = np.concatenate(horizontal_area, axis=0)
 
-        print(f"current chunk: x: {self.character.global_position.x // self.world.chunk_width} "
-              f"y: {self.character.global_position.y // self.world.chunk_height}")
-        # print(self.new_chunks)
-        # print(f"Loaded chunks:")
-        # for index in range(len(self.loaded_chunks)):
-        #     print(self.loaded_chunks[index], end=" ")
-        #     if (index + 1) % 5 == 0:
-        #         print()
+        # print(f"current chunk: x: {self.character.global_position.x // self.world.chunk_width} "
+        #       f"y: {self.character.global_position.y // self.world.chunk_height}")
 
         self.last_update_pos = (chunk_x, chunk_y)
 
         if x_shift == 1:
-            return np.concatenate((world_copy[100:, :], vertical_area), axis=0)
+            world_copy = np.concatenate((world_copy[100:, :], vertical_area), axis=0)
         elif x_shift == -1:
-            return np.concatenate((vertical_area, world_copy[:-100, :]), axis=0)
+            world_copy = np.concatenate((vertical_area, world_copy[:-100, :]), axis=0)
         if y_shift == 1:
-            return np.concatenate((world_copy[:, 50:], horizontal_area), axis=1)
+            world_copy = np.concatenate((world_copy, horizontal_area), axis=1)
         elif y_shift == -1:
-            return np.concatenate((horizontal_area, world_copy[:, :-50]), axis=1)
+            world_copy = np.concatenate((horizontal_area, world_copy), axis=1)
 
-        return None
+        return world_copy
 
-    def load_chunks(self, x_direction, y_direction, world_copy):
-        # for index in range(len(self.loaded_chunks)):
-        #     print(self.loaded_chunks[index], end=" ")
-        #     if (index + 1) % 5 == 0:
-        #         print()
+    def load_chunks(self, world_copy):
 
-        self.update_chunks_cords(x_direction, y_direction)
+        self.update_chunks_cords()
 
-        # print("Horizontal chunks:")
-        # for row in range(len(self.horizontal_chunks)):
-        #     print(self.horizontal_chunks[row], end=" ")
-        # print()
-        # print("Vertical chunks:")
-        # for column in range(len(self.vertical_chunks)):
-        #     print(self.vertical_chunks[column])
-
-        # self.update_map(x_direction, y_direction, world_copy)
         self.generate_chunks()
-        world_map = self.update_map(x_direction, y_direction, world_copy)
-        # world_map = self.load_map()
+        world_map = self.update_map(world_copy)
 
         local_position = self.get_local_position(self.character.global_position.x,
                                                  self.character.global_position.y)
@@ -290,7 +257,7 @@ class Map:
                     world_copy = self.world_map.copy()
                     threading.Thread(
                         target=self.load_chunks,
-                        args=(x, y, world_copy,),
+                        args=(world_copy,),
                         daemon=True
                     ).start()
 
