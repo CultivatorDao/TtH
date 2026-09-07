@@ -47,6 +47,8 @@ class AdventureState(State):
                     print("0", end="")
                 else:
                     print("1", end="")
+                if x == self.character_position.x and y == self.character_position.y:
+                    print("@", end="")
             print()
 
     def display_map(self):
@@ -56,6 +58,12 @@ class AdventureState(State):
                     print("0", end="")
                 else:
                     print("1", end="")
+                if x == self.character_position.x and y == self.character_position.y:
+                    print("@", end="")
+                if y % 50 == 0:
+                    print("=", end="")
+                if x % 100 == 0:
+                    print("|", end="")
             print()
 
     def display_sight(self, console):
