@@ -20,6 +20,14 @@ class Range:
     def in_range(self, number):
         return self.min <= number < self.max
 
+class DeepOcean(Biome):
+
+    def __init__(self):
+        super().__init__()
+        self.name = "Deep Ocean"
+        self.temperature = 0
+        self.passability = 1
+        self.bg_color = (0, 0, 153)
 
 class Ocean(Biome):
 
@@ -28,8 +36,16 @@ class Ocean(Biome):
         self.name = "Ocean"
         self.temperature = 0
         self.passability = 1
-        self.bg_color = (0, 0, 255)
+        self.bg_color = (0, 0, 204)
 
+class Beach(Biome):
+
+    def __init__(self):
+        super().__init__()
+        self.name = "Beach"
+        self.temperature = 0
+        self.passability = 1
+        self.bg_color = (238, 234, 121)
 
 class Land(Biome):
 
@@ -38,7 +54,7 @@ class Land(Biome):
         self.name = "Land"
         self.temperature = 0
         self.passability = 0
-        self.bg_color = (0, 255, 0)
+        self.bg_color = (0, 153, 0)
 
 
 class EmptyBiome(Biome):

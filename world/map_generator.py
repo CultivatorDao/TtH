@@ -5,13 +5,14 @@ from noise_generator.cpp_functions import noise, apply_distance_function
 
 from world.map_tile import MapTile
 
-from world.biomes.biome import Range, Ocean, Land
+from world.biomes.biome import Range, Ocean, Land, Beach, DeepOcean
 
 
 class MapGenerator:
-    OCEAN = Range(-1, 0.1)
+    DEEP_OCEAN = Range(-1, 0.05)
+    OCEAN = Range(0.05, 0.1)
     BEACH = Range(0.1, 0.15)
-    PLAINS = Range(0.1, 1)
+    PLAINS = Range(0.15, 1)
 
     def __init__(self, width, height, chunk_width, chunk_height,
                  seed=0, tile_size: float = 16.0, magnification: int = 1):
@@ -24,9 +25,13 @@ class MapGenerator:
         self.magnification = magnification
 
     def define_biome(self, noise_value):
-        if self.OCEAN.in_range(noise_value):
+        if self.DEEP_OCEAN.in_range(noise_value):
+            return DeepOcean()
+        elif self.OCEAN.in_range(noise_value):
             return Ocean()
-        elif self.PLAINS.in_range(noise_value):
+        elif self.BEACH.in_range(noise_value):
+            return Beach()
+        else:
             return Land()
 
     def find_start_location(self):
