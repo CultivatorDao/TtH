@@ -24,8 +24,6 @@ class Map:
         self.character = self.world.character
         self.character_position = self.character.position
 
-        self.db_lock = threading.Lock()
-
         self.shared_world_queue = queue.Queue()
         self.world_loading_in_progress = False
 
@@ -55,8 +53,6 @@ class Map:
     def get_local_position(self, x, y):
         return self.engine.LOAD_DISTANCE * self.world.chunk_width + x % self.world.chunk_width, \
                self.engine.LOAD_DISTANCE * self.world.chunk_height + y % self.world.chunk_height
-        # return self.engine.LOAD_DISTANCE * self.world.chunk_width, \
-        #        self.engine.LOAD_DISTANCE * self.world.chunk_height
 
     def create_world_map(self):
         start_position = self.world.map_generator.get_location(0.5, 1)
@@ -80,8 +76,41 @@ class Map:
 
         self.last_update_pos = self.get_chunk_cords()
 
-        self.save_map(world_map, world_size=self.engine.INITIAL_WORLD_SIZE)
-        return self.load_map()
+        self.save_map(world_map)
+
+        return world_map
+
+    def generate_chunks(self):
+
+        with shelve.open("world_map", writeback=True) as db:
+
+            new_chunks = self.horizontal_chunks + self.vertical_chunks
+
+            for index in range(len(new_chunks)):
+                chunk_cords = new_chunks[index]
+                if db.get(f"chunk{chunk_cords[0]}_{chunk_cords[1]}") is None:
+                    db[f"chunk{chunk_cords[0]}_{chunk_cords[1]}"] = self.world.map_generator.generate_by_chunk(chunk_cords[0], chunk_cords[1])
+
+    def character_sight(self, console=None):
+        for y in range(-(self.engine.VIEWPORT_HEIGHT // 2), self.engine.VIEWPORT_HEIGHT // 2 + 1):
+            for x in range(-(self.engine.VIEWPORT_WIDTH // 2), self.engine.VIEWPORT_WIDTH // 2 + 1):
+                tile_x = x + self.character.position.x
+                tile_y = y + self.character.position.y
+                map_size = self.world_map.shape
+                if tile_x >= map_size[0] or tile_y >= map_size[1]:
+                    tile = MapTile(EmptyBiome())
+                else:
+                    tile = self.world_map[tile_x][tile_y]
+
+                console.print(x + self.engine.VIEWPORT_WIDTH // 2, y + self.engine.VIEWPORT_HEIGHT // 2, " ",
+                              bg=tile.biome.bg_color)
+        console.print(self.engine.VIEWPORT_WIDTH // 2, self.engine.VIEWPORT_HEIGHT // 2, "@", fg=(0, 0, 0))
+        console.print(0, self.engine.VIEWPORT_HEIGHT + 1, f"x: {self.character.global_position.x}")
+        console.print(10, self.engine.VIEWPORT_HEIGHT + 1, f"y: {self.character.global_position.y}")
+        console.print(40, self.engine.VIEWPORT_HEIGHT + 1, f"local x: {self.character.position.x}")
+        console.print(60, self.engine.VIEWPORT_HEIGHT + 1, f"local y: {self.character.position.y}")
+        console.print(0, self.engine.VIEWPORT_HEIGHT + 2, f"x_chunk: {self.character.global_position.x // self.world.chunk_width}")
+        console.print(15, self.engine.VIEWPORT_HEIGHT + 2, f"y_chunk: {self.character.global_position.y // self.world.chunk_height}")
 
     def update_chunks_cords(self):
         self.vertical_chunks.clear()
@@ -107,18 +136,7 @@ class Map:
             y = (chunk_y + self.engine.LOAD_DISTANCE * y_shift) % self.world.chunks_size
             self.horizontal_chunks.append((x, y))
 
-    def generate_chunks(self):
-
-        with shelve.open("world_map", writeback=True) as db:
-
-            new_chunks = self.horizontal_chunks + self.vertical_chunks
-
-            for index in range(len(new_chunks)):
-                chunk_cords = new_chunks[index]
-                if db.get(f"chunk{chunk_cords[0]}_{chunk_cords[1]}") is None:
-                    db[f"chunk{chunk_cords[0]}_{chunk_cords[1]}"] = self.world.map_generator.generate_by_chunk(chunk_cords[0], chunk_cords[1])
-
-    # @functools.lru_cache(maxsize=4)
+    # For now useless
     def load_map(self):
         area = [[None for _ in range(self.engine.RENDERING_DISTANCE)] for _ in range(self.engine.RENDERING_DISTANCE)]
         with shelve.open("world_map", writeback=False, flag='r') as db:
@@ -149,17 +167,17 @@ class Map:
 
                 if x_shift:
                     chunk_cord = self.vertical_chunks[index]
-                    if not ((y_shift == -1 and index == 0) or
-                            (y_shift == 1 and index == self.engine.RENDERING_DISTANCE - 1)):
-                        vertical_area.append(db[f"chunk{chunk_cord[0]}_{chunk_cord[1]}"])
+                    vertical_area.append(db[f"chunk{chunk_cord[0]}_{chunk_cord[1]}"])
                 if y_shift:
                     chunk_cord = self.horizontal_chunks[index]
                     horizontal_area.append(db[f"chunk{chunk_cord[0]}_{chunk_cord[1]}"])
 
         if y_shift == 1:
             world_copy = world_copy[:, 50:].copy()
+            vertical_area.pop()
         elif y_shift == -1:
             world_copy = world_copy[:, :-50].copy()
+            vertical_area.pop(0)
 
         if x_shift:
             vertical_area = np.concatenate(vertical_area, axis=1)
@@ -182,19 +200,7 @@ class Map:
 
         return world_copy
 
-    def load_chunks(self, world_copy):
-
-        self.update_chunks_cords()
-
-        self.generate_chunks()
-        world_map = self.update_map(world_copy)
-
-        local_position = self.get_local_position(self.character.global_position.x,
-                                                 self.character.global_position.y)
-
-        self.shared_world_queue.put((world_map, (local_position[0], local_position[1])))
-
-    def save_map(self, world_map, world_size):
+    def save_map(self, world_map):
         with shelve.open("world_map", writeback=True) as db:
             for index in range(len(self.loaded_chunks)):
                 chunk_cord = self.loaded_chunks[index]
@@ -211,30 +217,21 @@ class Map:
         return not (self.engine.VIEWPORT_WIDTH // 2 < self.character_position.x + x < x_boundary) or \
            not (self.engine.VIEWPORT_HEIGHT < self.character_position.y + y < y_boundary)
 
-    def character_sight(self, console=None):
-        for y in range(-(self.engine.VIEWPORT_HEIGHT // 2), self.engine.VIEWPORT_HEIGHT // 2 + 1):
-            for x in range(-(self.engine.VIEWPORT_WIDTH // 2), self.engine.VIEWPORT_WIDTH // 2 + 1):
-                tile_x = x + self.character.position.x
-                tile_y = y + self.character.position.y
-                map_size = self.world_map.shape
-                if tile_x >= map_size[0] or tile_y >= map_size[1]:
-                    tile = MapTile(EmptyBiome())
-                else:
-                    tile = self.world_map[tile_x][tile_y]
-
-                console.print(x + self.engine.VIEWPORT_WIDTH // 2, y + self.engine.VIEWPORT_HEIGHT // 2, " ",
-                              bg=tile.biome.bg_color)
-        console.print(self.engine.VIEWPORT_WIDTH // 2, self.engine.VIEWPORT_HEIGHT // 2, "@", fg=(0, 0, 0))
-        console.print(0, self.engine.VIEWPORT_HEIGHT + 1, f"x: {self.character.global_position.x}")
-        console.print(10, self.engine.VIEWPORT_HEIGHT + 1, f"y: {self.character.global_position.y}")
-        console.print(40, self.engine.VIEWPORT_HEIGHT + 1, f"local x: {self.character.position.x}")
-        console.print(60, self.engine.VIEWPORT_HEIGHT + 1, f"local y: {self.character.position.y}")
-        console.print(0, self.engine.VIEWPORT_HEIGHT + 2, f"x_chunk: {self.character.global_position.x // self.world.chunk_width}")
-        console.print(15, self.engine.VIEWPORT_HEIGHT + 2, f"y_chunk: {self.character.global_position.y // self.world.chunk_height}")
-
     def check_passability(self, x, y):
         # return not (self.world_map[x, y].biome.passability > 0)
         return True
+
+    def load_chunks(self, world_copy):
+
+        self.update_chunks_cords()
+
+        self.generate_chunks()
+        world_map = self.update_map(world_copy)
+
+        local_position = self.get_local_position(self.character.global_position.x,
+                                                 self.character.global_position.y)
+
+        self.shared_world_queue.put((world_map, (local_position[0], local_position[1])))
 
     def move(self, x, y):
 
@@ -267,4 +264,3 @@ class Map:
 
                 self.world_loading_in_progress = False
 
-            # self.check_boundaries(x, y)
