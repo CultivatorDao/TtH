@@ -55,7 +55,7 @@ class Map:
                self.engine.LOAD_DISTANCE * self.world.chunk_height + y % self.world.chunk_height
 
     def create_world_map(self):
-        start_position = self.world.map_generator.get_location(0.5, 1)
+        start_position = self.world.map_generator.get_location(0.1, 1)
         world_map = self.world.map_generator.generate_initial_map(
             start_x=start_position[0],
             start_y=start_position[1],
@@ -174,10 +174,12 @@ class Map:
 
         if y_shift == 1:
             world_copy = world_copy[:, 50:].copy()
-            vertical_area.pop()
+            if x_shift:
+                vertical_area.pop()
         elif y_shift == -1:
             world_copy = world_copy[:, :-50].copy()
-            vertical_area.pop(0)
+            if x_shift:
+                vertical_area.pop(0)
 
         if x_shift:
             vertical_area = np.concatenate(vertical_area, axis=1)

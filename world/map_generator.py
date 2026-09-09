@@ -54,7 +54,7 @@ class MapGenerator:
                 )
                 if min_height <= height < max_height:
                     return x, y
-        return None
+        return 0, 0
 
     def generate_initial_map(self, start_x, start_y, width, height):
         """
