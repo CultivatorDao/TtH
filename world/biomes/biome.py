@@ -47,6 +47,15 @@ class Beach(Biome):
         self.passability = 1
         self.bg_color = (238, 234, 121)
 
+class River(Biome):
+
+    def __init__(self):
+        super().__init__()
+        self.name = "River"
+        self.temperature = 0
+        self.passability = 1
+        self.bg_color = (0, 0, 204)
+
 class Land(Biome):
 
     def __init__(self):

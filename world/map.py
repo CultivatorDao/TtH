@@ -100,7 +100,7 @@ class Map:
                 if tile_x >= map_size[0] or tile_y >= map_size[1]:
                     tile = MapTile(EmptyBiome())
                 else:
-                    tile = self.world_map[tile_x][tile_y]
+                    tile = self.world_map[tile_x, tile_y]
 
                 console.print(x + self.engine.VIEWPORT_WIDTH // 2, y + self.engine.VIEWPORT_HEIGHT // 2, " ",
                               bg=tile.biome.bg_color)
@@ -111,6 +111,7 @@ class Map:
         console.print(60, self.engine.VIEWPORT_HEIGHT + 1, f"local y: {self.character.position.y}")
         console.print(0, self.engine.VIEWPORT_HEIGHT + 2, f"x_chunk: {self.character.global_position.x // self.world.chunk_width}")
         console.print(15, self.engine.VIEWPORT_HEIGHT + 2, f"y_chunk: {self.character.global_position.y // self.world.chunk_height}")
+        console.print(80, self.engine.VIEWPORT_HEIGHT + 1, f"Biome: {self.world_map[self.character_position.x][self.character_position.y].biome.name}")
 
     def update_chunks_cords(self):
         self.vertical_chunks.clear()

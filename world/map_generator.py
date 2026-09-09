@@ -5,14 +5,10 @@ from noise_generator.cpp_functions import noise, apply_distance_function
 
 from world.map_tile import MapTile
 
-from world.biomes.biome import Range, Ocean, Land, Beach, DeepOcean
+from .biome_distributor import BiomeDistributor
 
 
 class MapGenerator:
-    DEEP_OCEAN = Range(-1, 0.05)
-    OCEAN = Range(0.05, 0.1)
-    BEACH = Range(0.1, 0.15)
-    PLAINS = Range(0.15, 1)
 
     def __init__(self, width, height, chunk_width, chunk_height,
                  seed=0, tile_size: float = 16.0, magnification: int = 1):
@@ -23,23 +19,6 @@ class MapGenerator:
         self.seed = seed
         self.tile_size = tile_size * magnification
         self.magnification = magnification
-
-    def define_biome(self, noise_value):
-        if self.DEEP_OCEAN.in_range(noise_value):
-            return DeepOcean()
-        elif self.OCEAN.in_range(noise_value):
-            return Ocean()
-        elif self.BEACH.in_range(noise_value):
-            return Beach()
-        else:
-            return Land()
-
-    def find_start_location(self):
-        for y in range(self.height * self.magnification):
-            for x in range(self.width * self.magnification):
-                if noise(x / self.tile_size, y / self.tile_size, self.seed) > 0.1:
-                    return x, y
-        return None
 
     def get_location(self, min_height, max_height: int = 0):
         if not max_height:
@@ -85,6 +64,7 @@ class MapGenerator:
         return world_map.reshape((width * self.chunk_width, height * self.chunk_height))
 
     def generate_by_chunk(self, chunk_x, chunk_y):
+        distributor = BiomeDistributor()
         chunk: np.ndarray = np.zeros(
             (self.chunk_width, self.chunk_height), dtype=MapTile
         )
@@ -93,12 +73,14 @@ class MapGenerator:
                 noise_value = noise(x / self.tile_size,
                                     y / self.tile_size,
                                     self.seed)
-                noise_value = apply_distance_function(
+                temperature = 0
+                moisture = 0
+                altitude = apply_distance_function(
                     noise_value,
                     float(x), float(y), self.width, self.height,
                     _magnification=self.magnification
                 )
-                biome = self.define_biome(noise_value)
-                chunk[x % self.chunk_width][y % self.chunk_height] = MapTile(biome)
+                biome = distributor.define_biome(altitude, temperature, moisture)
+                chunk[x % self.chunk_width, y % self.chunk_height] = MapTile(biome)
 
         return chunk
