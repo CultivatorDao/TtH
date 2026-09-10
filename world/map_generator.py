@@ -5,7 +5,7 @@ from noise_generator.cpp_functions import noise, apply_distance_function
 
 from world.map_tile import MapTile
 
-from .biome_distributor import BiomeDistributor
+from .biome_distributor import BiomeDistributor, Biome
 
 
 class MapGenerator:
@@ -69,18 +69,71 @@ class MapGenerator:
             (self.chunk_width, self.chunk_height), dtype=MapTile
         )
         for y in range(chunk_y * self.chunk_height, (chunk_y + 1) * self.chunk_height):
+
+            distance_from_equator = abs(float(y) - (self.height / 2.0))
+            normalized_pole_dist = distance_from_equator / (self.height / 2.0)
+            latitude_baseline = 1.0 - normalized_pole_dist
+
             for x in range(chunk_x * self.chunk_width, (chunk_x + 1) * self.chunk_width):
                 noise_value = noise(x / self.tile_size,
                                     y / self.tile_size,
                                     self.seed)
-                temperature = 0
-                moisture = 0
+                x_cord = x % self.chunk_width
+                y_cord = y % self.chunk_height
                 altitude = apply_distance_function(
                     noise_value,
                     float(x), float(y), self.width, self.height,
                     _magnification=self.magnification
                 )
-                biome = distributor.define_biome(altitude, temperature, moisture)
-                chunk[x % self.chunk_width, y % self.chunk_height] = MapTile(biome)
+
+                if altitude > distributor.mountain_threshold:
+                    print("cehcek")
+                    biome = Biome(distributor.extreme_biome[3])
+                    chunk[x_cord, y_cord] = MapTile(biome)
+                    continue
+                if altitude < distributor.ocean_level:
+                    biome = Biome(distributor.extreme_biome[0])
+                    chunk[x_cord, y_cord] = MapTile(biome)
+                    continue
+                if altitude < distributor.sea_level:
+                    biome = Biome(distributor.extreme_biome[1])
+                    chunk[x_cord, y_cord] = MapTile(biome)
+                    continue
+                if altitude < distributor.beach_threshold:
+                    biome = Biome(distributor.extreme_biome[2])
+                    chunk[x_cord, y_cord] = MapTile(biome)
+                    continue
+
+
+                temperature_noise = noise(x / self.tile_size,
+                                    y / self.tile_size,
+                                    self.seed)
+                moisture_noise = noise(x / self.tile_size,
+                                    y / self.tile_size,
+                                    self.seed)
+
+                raw_temp = (temperature_noise + 1.0) / 2.0
+                raw_moisture = (moisture_noise + 1.0) / 2.0
+
+                # Evaluate low-altitude baseline climate
+                temperature = (latitude_baseline * 0.7) + (raw_temp * 0.3)
+                land_range = 1.0 - distributor.beach_threshold
+                coastal_influence = 1.0 - ((altitude - distributor.beach_threshold) / land_range)
+                moisture = (coastal_influence * 0.6) + (raw_moisture * 0.4)
+                #
+
+                temperature = max(0, min(1, temperature))
+                moisture = max(0, min(1, moisture))
+
+                temperature = distributor.remap(temperature, -1, 1, -50, 50)
+                moisture = distributor.remap(moisture, -1, 1, 0, 100)
+                # temperature = temperature * 50
+                # moisture = ((moisture + 1) / 2) * 100
+
+                # temperature = max(-50, min(50, temperature))
+                # moisture = max(0, min(100, moisture))
+
+                biome = distributor.define_biome(temperature, moisture)
+                chunk[x_cord, y_cord] = MapTile(biome)
 
         return chunk
